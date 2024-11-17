@@ -8,14 +8,11 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class BlockingObjectPool<T> {
 
-
     private final BlockingQueue<T> pool;
-
-    final Lock lock = new ReentrantLock();
-
-    final Condition takeCond = lock.newCondition();
-    final Condition getCond = lock.newCondition();
-    final int size;
+    private final Lock lock = new ReentrantLock();
+    private final Condition takeCond = lock.newCondition();
+    private final Condition getCond = lock.newCondition();
+    private final int size;
 
     public BlockingObjectPool(int size) {
         pool = new LinkedBlockingQueue<>(size);
@@ -23,13 +20,7 @@ public class BlockingObjectPool<T> {
 
     }
 
-    /**
-     * Gets object from pool or blocks if pool is empty
-     *
-     * @return object from pool
-     */
     public Object get() {
-
         try {
             lock.lock();
             while (pool.isEmpty()) {
@@ -46,11 +37,6 @@ public class BlockingObjectPool<T> {
         return null;
     }
 
-    /**
-     * Puts object to pool or blocks if pool is full
-     *
-     * @param object to be taken back to pool
-     */
     public void take(T object) {
         try {
             lock.lock();
@@ -65,5 +51,4 @@ public class BlockingObjectPool<T> {
             lock.unlock();
         }
     }
-
 }

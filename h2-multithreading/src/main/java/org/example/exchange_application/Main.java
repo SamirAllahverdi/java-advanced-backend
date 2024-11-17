@@ -11,9 +11,7 @@ import org.example.exchange_application.model.User;
 import org.example.exchange_application.service.ExchangeService;
 
 public class Main {
-
-
-    public static void main(String[] args) throws ExecutionException, InterruptedException, TimeoutException { //TODO: file not found exception
+    public static void main(String[] args) throws ExecutionException, InterruptedException, TimeoutException {
 
         ExchangeService service = new ExchangeService(new ExchangeDAO());
 
@@ -22,14 +20,11 @@ public class Main {
         User user = new User("Alex", Arrays.asList(eur, usd));
         service.createSampleData(user);
 
-
         ExecutorService es = Executors.newFixedThreadPool(2);
-        Future future1 = es.submit(() -> service.exchange(CurrencyEnum.EUR, CurrencyEnum.USD));
-        Future future2 = es.submit(() -> service.exchange(CurrencyEnum.USD, CurrencyEnum.EUR));
+        Future<?> future1 = es.submit(() -> service.exchange(BigDecimal.valueOf(50), CurrencyEnum.EUR, CurrencyEnum.USD));
+        Future<?> future2 = es.submit(() -> service.exchange(BigDecimal.valueOf(20), CurrencyEnum.USD, CurrencyEnum.EUR));
 
         future1.get(10, TimeUnit.SECONDS);
         future2.get(10, TimeUnit.SECONDS);
     }
-
-
 }

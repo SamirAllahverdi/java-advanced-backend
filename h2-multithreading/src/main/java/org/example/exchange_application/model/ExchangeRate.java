@@ -18,7 +18,6 @@ public enum ExchangeRate {
         this.rate = rate;
     }
 
-
     public static BigDecimal getExchangeRate(CurrencyEnum source, CurrencyEnum target) {
         return Arrays.stream(ExchangeRate.values())
                 .filter(er -> er.source == source && er.target == target)

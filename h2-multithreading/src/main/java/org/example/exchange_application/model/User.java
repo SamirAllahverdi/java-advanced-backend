@@ -9,12 +9,10 @@ public class User implements Serializable {
     private String name;
     private List<Currency> currencies;
 
-
     public User(String name, List<Currency> currencies) {
         this.name = name;
         this.currencies = currencies;
     }
-
 
     public String getName() {
         return name;

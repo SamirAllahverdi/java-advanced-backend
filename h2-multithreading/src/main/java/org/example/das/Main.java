@@ -8,6 +8,9 @@ import java.util.logging.Logger;
 
 public class Main {
     private static final Logger LOG = Logger.getLogger(Main.class.getName());
+    //TODO: how to do below?
+    //Run your samples with different versions of Java (6, 8, and 10, 11) and measure the performance.
+    //Provide a simple report to your mentor
 
     public static void main(String[] args) {
         adjustLogging();
@@ -45,7 +48,7 @@ public class Main {
         ExecutorService service = Executors.newFixedThreadPool(2, customThreadFactory);
         try {
             service.execute(() -> sumValues(map));
-            service.execute(() -> addValues(map)); //TODO: how to stop all execution threads if exception is thrown?
+            service.execute(() -> addValues(map));
         } finally {
             service.shutdown();
         }

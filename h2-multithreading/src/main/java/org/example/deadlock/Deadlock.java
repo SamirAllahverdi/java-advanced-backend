@@ -8,35 +8,33 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class Deadlock {
-    static final List<Integer> collection = new ArrayList<>();
-
-    static final Object lock = new Object();
-
+    private static final List<Integer> collection = new ArrayList<>();
+    private static final Object lock = new Object();
 
     public static void main(String[] args) throws Exception {
-
         ExecutorService es = Executors.newFixedThreadPool(3);
-        Future write = write(es);
-        Future future = printSum(es);
-        Future future1 = printSquareRootOfSumOfSquares(es);
-
+        
+        Future<?> write = write(es);
+        Future<?> future = printSum(es);
+        Future<?> future1 = printSquareRootOfSumOfSquares(es);
+        
         write.get();
         future.get();
         future1.get();
-
+        
         es.shutdown();
     }
 
-    private static Future printSquareRootOfSumOfSquares(ExecutorService es) throws ExecutionException, InterruptedException {
+    private static Future<?> printSquareRootOfSumOfSquares(ExecutorService es) throws ExecutionException, InterruptedException {
         Runnable writer = () -> {
             System.out.println(Thread.currentThread().getName() + " starting ");
 
-            while(true) {
+            while (true) {
                 int sum = 0;
                 synchronized (lock) {
                     System.out.println(Thread.currentThread().getName() + " locked for collection " + collection);
-                    for (int a = 0; a < collection.size(); a++) {
-                        sum += Math.pow(collection.get(a), 2);
+                    for (Integer integer : collection) {
+                        sum += Math.pow(integer, 2);
                     }
                 }
 
@@ -54,7 +52,7 @@ public class Deadlock {
 
     }
 
-    private static Future printSum(ExecutorService es) throws ExecutionException, InterruptedException {
+    private static Future<?> printSum(ExecutorService es) throws ExecutionException, InterruptedException {
 
         Runnable writer = () -> {
             System.out.println(Thread.currentThread().getName() + " starting ");
@@ -76,11 +74,10 @@ public class Deadlock {
             }
         };
 
-   return es.submit(writer);
+        return es.submit(writer);
     }
 
-    private static Future write(ExecutorService es) throws Exception {
-
+    private static Future<?> write(ExecutorService es) {
         Runnable writer = () -> {
             System.out.println(Thread.currentThread().getName() + " starting ");
             for (int a = 0; a < 100; a++) {

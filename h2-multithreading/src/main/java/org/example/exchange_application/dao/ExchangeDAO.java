@@ -7,7 +7,7 @@ import java.io.*;
 
 public class ExchangeDAO {
 
-    public static final String PATH = "h7_concurrency/src/main/java/exchange_application/user1.txt";
+    public static final String PATH = "h2-multithreading/src/main/java/org/example/exchange_application/user1.txt";
 
 
     public void createSampleData(User user) {
