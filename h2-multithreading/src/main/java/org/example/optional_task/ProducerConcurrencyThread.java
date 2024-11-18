@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
+import java.util.logging.Logger;
 import java.util.random.RandomGenerator;
 import java.util.random.RandomGeneratorFactory;
 
@@ -30,20 +31,25 @@ public class ProducerConcurrencyThread extends Thread {
 
     @Override
     public void run() {
-        while (!isInterrupted()) {
-            long start = System.currentTimeMillis();
-            long end = start;
-            int currWriteOpsPerSec = 0;
-            while (end - start < 1_000) {
-                addNumber();
-                currWriteOpsPerSec++;
-                end = System.currentTimeMillis();
+        try {
+            while (!isInterrupted()) {
+                long start = System.currentTimeMillis();
+                long end = start;
+                int currWriteOpsPerSec = 0;
+                while (end - start < 1_000) {
+                    addNumber();
+                    currWriteOpsPerSec++;
+                    end = System.currentTimeMillis();
+                }
+                writeOpsPerSec.add(currWriteOpsPerSec);
             }
-            writeOpsPerSec.add(currWriteOpsPerSec);
+        } catch (InterruptedException e) {
+            System.out.println(getName() + " was interrupted");
+            Thread.currentThread().interrupt();
         }
     }
 
-    private void addNumber() {
+    private void addNumber() throws InterruptedException {
         try {
             lock.lock();
             if (!blockingQueue.isEmpty()) {
@@ -51,8 +57,6 @@ public class ProducerConcurrencyThread extends Thread {
             }
             blockingQueue.put(randomNumberGenerator.nextInt(0, 20));
             writeCon.signal();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(getName() + " was interrupted");
         } finally {
             lock.unlock();
         }

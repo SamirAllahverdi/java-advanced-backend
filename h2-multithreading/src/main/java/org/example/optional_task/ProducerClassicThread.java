@@ -22,27 +22,28 @@ public class ProducerClassicThread extends Thread {
 
     @Override
     public void run() {
-        while (!isInterrupted()) {
-            long start = System.currentTimeMillis();
-            long end = start;
-            int currWriteOpsPerSec = 0;
-            while (end - start < 1_000) {
-                addNumber();
-                currWriteOpsPerSec++;
-                end = System.currentTimeMillis();
+        try {
+            while (!isInterrupted()) {
+                long start = System.currentTimeMillis();
+                long end = start;
+                int currWriteOpsPerSec = 0;
+                while (end - start < 1_000) {
+                    addNumber();
+                    currWriteOpsPerSec++;
+                    end = System.currentTimeMillis();
+                }
+                writeOpsPerSec.add(currWriteOpsPerSec);
             }
-            writeOpsPerSec.add(currWriteOpsPerSec);
+        } catch (InterruptedException e) {
+            System.out.println(getName() + " was interrupted");
+            Thread.currentThread().interrupt();
         }
     }
 
-    private void addNumber() {
+    private void addNumber() throws InterruptedException {
         synchronized (list) {
             if (!list.isEmpty()) {
-                try {
-                    list.wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(getName() + " was interrupted");
-                }
+                list.wait();
             }
             int randomNumber = randomNumberGenerator.nextInt(0, 20);
             list.add(randomNumber);

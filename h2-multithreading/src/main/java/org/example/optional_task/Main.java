@@ -26,24 +26,27 @@ public class Main {
         consumerConcurrency.start();
 
         Thread hook = new Thread(() -> {
-            producer.interrupt();
-            consumer.interrupt();
-            producerConcurrencyThread.interrupt();
-            consumerConcurrency.interrupt();
             try {
+                producer.interrupt();
+                consumer.interrupt();
+                producerConcurrencyThread.interrupt();
+                consumerConcurrency.interrupt();
+
                 producer.join();
                 consumer.join();
                 producerConcurrencyThread.join();
                 consumerConcurrency.join();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
 
-            System.out.println("ProducerClassic writes Ops/Sec: " + producer.getWriteOpsPerSec());
-            System.out.println("ConsumerClassic reads Ops/Sec: " + consumer.getReadOpsPerSec());
-            System.out.println("ProducerConcurrency writes Ops/Sec: " + producerConcurrencyThread.getWriteOpsPerSec());
-            System.out.println("ConsumerConcurrency reads Ops/Sec: " + consumerConcurrency.getReadOpsPerSec());
-            System.out.println("Shutdown hook executed");
+                System.out.println("ProducerClassic writes Ops/Sec: " + producer.getWriteOpsPerSec());
+                System.out.println("ConsumerClassic reads Ops/Sec: " + consumer.getReadOpsPerSec());
+                System.out.println("ProducerConcurrency writes Ops/Sec: " + producerConcurrencyThread.getWriteOpsPerSec());
+                System.out.println("ConsumerConcurrency reads Ops/Sec: " + consumerConcurrency.getReadOpsPerSec());
+                System.out.println("Shutdown hook executed");
+
+            } catch (InterruptedException e) {
+                System.out.println("Shutdown hook thread was interrupted");
+                Thread.currentThread().interrupt();
+            }
         });
         Runtime.getRuntime().addShutdownHook(hook);
     }

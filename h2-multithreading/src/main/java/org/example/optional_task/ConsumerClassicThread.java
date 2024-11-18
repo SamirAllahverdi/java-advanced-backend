@@ -18,29 +18,30 @@ public class ConsumerClassicThread extends Thread {
 
     @Override
     public void run() {
-        int sum = 0;
-        while (!isInterrupted()) {
-            long start = System.currentTimeMillis();
-            long end = start;
-            int currReadOpsPerSec = 0;
-            while (end - start < 1_000) {
-                int number = readNumber();
-                sum += number;
-                currReadOpsPerSec++;
-                end = System.currentTimeMillis();
+        try {
+            int sum = 0;
+            while (!isInterrupted()) {
+                long start = System.currentTimeMillis();
+                long end = start;
+                int currReadOpsPerSec = 0;
+                while (end - start < 1_000) {
+                    int number = readNumber();
+                    sum += number;
+                    currReadOpsPerSec++;
+                    end = System.currentTimeMillis();
+                }
+                readOpsPerSec.add(currReadOpsPerSec);
             }
-            readOpsPerSec.add(currReadOpsPerSec);
+        } catch (InterruptedException e) {
+            System.out.println(getName() + " was interrupted");
+            Thread.currentThread().interrupt();
         }
     }
 
-    private int readNumber() {
+    private int readNumber() throws InterruptedException {
         synchronized (list) {
             if (list.isEmpty()) {
-                try {
-                    list.wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(getName() + " was interrupted");
-                }
+                list.wait();
             }
             Integer number = list.pop();
             list.notify();
