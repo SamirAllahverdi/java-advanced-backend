@@ -13,8 +13,8 @@ import java.util.Map;
  */
 public class TemplateEngine {
 
-    private static final List<String> PLACEHOLDERS = Arrays.asList("#{name}", "#{surname}");
-    private static String TEMPLATE = String.format("Hi %s %s! Have a good day, Best Regards, Samir", PLACEHOLDERS.get(0), PLACEHOLDERS.get(1));
+    public static final List<String> PLACEHOLDERS = Arrays.asList("#{name}", "#{surname}");
+    public static String TEMPLATE = String.format("Hi %s %s! Have a good day, Best Regards, Samir", PLACEHOLDERS.get(0), PLACEHOLDERS.get(1));
 
     /**
      * Generate message string.
@@ -24,13 +24,12 @@ public class TemplateEngine {
      * @return the string
      */
     public String generateMessage(Template template, Client client) {
-
         final Map<String, String> placeholders = template.getPlaceholders();
+
         validateValues(placeholders);
         for (Map.Entry<String, String> ip : placeholders.entrySet()) {
             TEMPLATE = TEMPLATE.replace(ip.getKey(), ip.getValue());
         }
-
         return TEMPLATE;
     }
 

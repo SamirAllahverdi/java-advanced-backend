@@ -7,4 +7,5 @@ import java.util.Map;
  */
 public abstract class Template {
     public abstract Map<String,String> getPlaceholders();
+    public abstract void printResult(String template);
 }

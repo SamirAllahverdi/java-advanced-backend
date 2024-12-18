@@ -2,7 +2,9 @@ package com.epam.ld.module2.testing.template;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,8 +50,24 @@ public class FileTemplate extends Template {
 
         return values;
     }
+
+    @Override
+    public void printResult(String template) {
+        try (FileOutputStream fos = new FileOutputStream(getOutputFile())) {
+            fos.write(template.getBytes(Charset.defaultCharset()));
+        } catch (Exception ex) {
+            throw new RuntimeException("Exception happened!", ex);
+        }
+    }
+
     // used by tests
     public String getInputFile() {
         return inputFile;
     }
+
+    //used by tests
+    public String getOutputFile() {
+        return outputFile;
+    }
+
 }

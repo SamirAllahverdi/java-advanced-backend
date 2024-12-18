@@ -24,6 +24,11 @@ public class ConsoleTemplate extends Template{
         }
     }
 
+    @Override
+    public void printResult(String template) {
+        System.out.println(template);
+    }
+
     private Map<String, String> parseToMap(String values) {
         Map<String, String> placeholderValueMap = new HashMap<>();
 
